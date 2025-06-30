@@ -18,17 +18,17 @@ from sklearn.model_selection import StratifiedKFold
 ''' 모든 데이터 관리 로직(경로 설정, 데이터 분할, 로더 생성) '''
 class CustomDataModule(pl.LightningDataModule):
     def __init__(self, path, batch_size, num_workers):
-        super().__init__()
-        self.path = path # 데이터 경로 (config.yaml에서 받아옴)
-        self.batch_size = batch_size # 배치 사이즈 (config.yaml에서 받아옴)
-        self.num_workers = num_workers # 데이터 로딩 멀티프로세싱 (config.yaml에서 받아옴)
+        super().__init__() # config.yaml에서 받아옴
+        self.path = path
+        self.batch_size = batch_size
+        self.num_workers = num_workers
 
     # 이 함수는 최초 1회만 호출됨. 데이터 불러오고 학습용-검증용으로 나눔
     def setup(self, stage=None):
         # 1. 전체 데이터를 불러오고 StratifiedKFold로 분할
-        # 대회 데이터 설명에 따라 'train.csv'와 'meta.csv'를 사용
         df = pd.read_csv(f"{self.path}/train.csv")
-        skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+        # 타겟을 비율 유지하면서 5조각으로 나누고 첫번째 조각을 검증용으로 사용
+        skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42) 
         
         # train/validation 인덱스 분리
         # 여기서는 첫 번째 fold를 validation으로 사용
