@@ -7,29 +7,27 @@ from torchmetrics.classification import MulticlassF1Score, MulticlassAccuracy
 class CustomLightningModule(pl.LightningModule):
     def __init__(self, model_name, learning_rate, num_classes=17):
         super().__init__()
-        # 파라미터를 저장하면 나중에 체크포인트에서 자동으로 불러올 수 있어 편리해
+        # 파라미터를 저장하면 나중에 체크포인트에서 자동으로 불러올 수 있어 편리
         self.save_hyperparameters()
 
-        # 1. 모델 로드 (베이스라인 아이디어 적용)
-        # 베이스라인에서 timm.create_model을 사용한 것과 동일한 방식 
+        # 1. 모델 로드
         self.model = timm.create_model(
             self.hparams.model_name,
             pretrained=True,
             num_classes=self.hparams.num_classes
         )
 
-        # 2. 손실 함수 정의 (베이스라인 아이디어 적용)
-        # 베이스라인과 동일하게 CrossEntropyLoss 사용 
+        # 2. 손실 함수 정의 (CrossEntropyLoss는 다중 클래스 분류에 적합)
         self.loss_fn = nn.CrossEntropyLoss()
 
-        # 3. 평가지표 정의 (베이스라인 아이디어 적용 + 업그레이드)
-        # 대회의 핵심 지표인 Macro F1 Score 
+        # 3. 평가지표 정의
         self.f1_score = MulticlassF1Score(num_classes=self.hparams.num_classes, average='macro')
         self.accuracy = MulticlassAccuracy(num_classes=self.hparams.num_classes)
 
     def forward(self, x):
         return self.model(x)
 
+    # 한 배치에 대한 예측 -> 손실 계산 -> 로그 기록
     def training_step(self, batch, batch_idx):
         # 훈련 데이터에 대한 로직
         images, targets = batch
@@ -57,7 +55,6 @@ class CustomLightningModule(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        # 4. 옵티마이저 설정 (베이스라인 아이디어 적용)
-        # 베이스라인에서 사용한 Adam 옵티마이저 
+        # 4. 옵티마이저 설정 (베이스라인에서 사용한 Adam 옵티마이저)
         optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
         return optimizer

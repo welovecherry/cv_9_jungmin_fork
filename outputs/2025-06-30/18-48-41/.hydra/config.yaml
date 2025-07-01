@@ -1,0 +1,15 @@
+data:
+  path: data/raw
+  batch_size: 32
+  num_workers: 4
+model:
+  name: efficientnet_b0
+  pretrained: true
+wandb:
+  project: cv-team9
+  entity: cv-team9
+  name: ${model.name}-${now:%Y-%m-%d-%H-%M-%S}
+train:
+  seed: 42
+  learning_rate: 0.0001
+  num_epochs: 10

@@ -2,6 +2,7 @@
 
 # 기본값 설정
 defaults:
+  - _self_
   - data: default
   - model: efficientnet_b0
   - override hydra/job_logging: disabled # 로그 깔끔하게 보기
@@ -10,7 +11,7 @@ defaults:
 # 완디비 설정
 wandb:
   project: "cv-team9"
-  entity: "cv-team9"  
+  entity: "12hongcoffee-42"  
   name: "${model.name}-${now:%Y-%m-%d-%H-%M-%S}" # 실행 이름자동 생성(모델명-시간)
 
 # 공통 학습 파라미터
