@@ -2,12 +2,15 @@ import pytorch_lightning as pl
 import pandas as pd
 import cv2  # opencv-python 패키지
 from torch.utils.data import Dataset, DataLoader
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold  # 데이터셋을 클래스 비율대로 나눠주는 도구
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
+''' 
+문서 이미지 데이터를 불러와서, 학습용-검증용으로 나누고, 나중에 학습할 수 있도록 돕는 
+파이토치 라이트닝 데이터 관리 클래스 
+'''
 
-''' 대회용 문서 이미지를 실제로 불러오는 CustomDataset 클래스 '''
 class CustomDataset(Dataset):
     """
     데이터프레임과 이미지 루트 경로를 받아, 인덱스에 해당하는 이미지와 라벨을 반환하는 클래스.
@@ -27,7 +30,7 @@ class CustomDataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
-        # DataLoader가 이 함수를 호출해서 idx에 해당하는 데이터를 요청.
+        # DataFrame에서 특정 주소(id)에 해당하는 이미지와 라벨을 가져오는 메서드.
         
         # 1. idx에 해당하는 이미지 경로와 라벨을 가져오기
         image_path = f"{self.data_root}/{self.image_paths[idx]}"
